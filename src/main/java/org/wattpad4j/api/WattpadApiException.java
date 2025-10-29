@@ -1,6 +1,7 @@
 package org.wattpad4j.api;
 
 import java.io.Serial;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

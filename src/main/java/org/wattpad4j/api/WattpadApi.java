@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
-import net.bytebuddy.utility.nullability.UnknownNull;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
