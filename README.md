@@ -1,7 +1,7 @@
 # Wattpad4J; API (witlab4j-api)<br />Java Client Library for the Wattpad API
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.wattpad4j/wattpad4j-api.svg)](http://mvnrepository.com/artifact/org.wattpad4j/wattpad4j-api)
-[![Build Status](https://github.com/wattpad4j/wattpad4j-api/actions/workflows/ci-build.yml/badge.svg?branch=main)](https://github.com/wattpad4j/wattpad4j-api/actions/workflows/ci-build.yml)
+[![Build Status](https://github.com/wattpad4j/wattpad4j-api/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/wattpad4j/wattpad4j-api/actions/workflows/maven.yml)
 [![javadoc.io](https://javadoc.io/badge2/org.wattpad4j/wattpad4j-api/javadoc.io.svg)](https://javadoc.io/doc/org.wattpad4j/wattpad4j-api)
 
 Wattpad4j API (wattpad4j-api) provides a full-featured and easy to consume Java library for working with the Wattpad API.
@@ -38,7 +38,7 @@ dependencies {
 <dependency>
     <groupId>org.wattpad4j</groupId>
     <artifactId>wattpad4j-api</artifactId>
-    <version>1.1.0</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
