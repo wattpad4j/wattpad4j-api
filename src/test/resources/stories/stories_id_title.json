@@ -1,0 +1,13 @@
+{
+  "stories": [
+    {
+      "id": "1",
+      "title": "Title"
+    },
+    {
+      "id": "2",
+      "title": "Title"
+    }
+  ],
+  "total": 2
+}

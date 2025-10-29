@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.wattpad4j</groupId>
+    <artifactId>wattpad4j-api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <name>wattpad4j-parent</name>
+    <description>Parent POM for wattpad4j modules.</description>
+    <url>https://github.com/wattpad4j/wattpad4j-api</url>
+
+    <licenses>
+        <license>
+            <name>The MIT License (MIT)</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>yvt</id>
+            <name>Yaris van Thiel</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/wattpad4j/wattpad4j-api.git</connection>
+        <developerConnection>scm:git:https://github.com/wattpad4j/wattpad4j-api.git</developerConnection>
+        <url>https://github.com/wattpad4j/wattpad4j-api/</url>
+    </scm>
+
+    <properties>
+        <project.parentdir>${project.basedir}</project.parentdir>
+
+        <!-- Java versions -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+
+        <!-- Libraries -->
+        <lombok.version>1.18.42</lombok.version>
+        <jackson.core.version>2.20</jackson.core.version>
+        <jackson.databind.version>3.0.1</jackson.databind.version>
+        <jackson.version>2.20.0</jackson.version>
+        <jakarta.activation.version>2.1.4</jakarta.activation.version>
+        <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
+        <jersey.version>3.1.11</jersey.version>
+
+        <!-- Testing -->
+        <junit.jupiter.version>5.14.0</junit.jupiter.version>
+        <mockito.version>5.20.0</mockito.version>
+        <spotless.version>2.46.1</spotless.version>
+
+        <!-- Plugins -->
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
+        <maven.release.plugin.version>3.1.1</maven.release.plugin.version>
+        <maven.jacoco.plugin.version>0.8.14</maven.jacoco.plugin.version>
+        <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
+        <github.release.plugin.version>1.6.0</github.release.plugin.version>
+        <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+        <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+        <sonatype.staging.version>1.7.0</sonatype.staging.version>
+    </properties>
+
+    <dependencies>
+        <!-- MAIN -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-apache-connector</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta.servlet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven.release.plugin.version}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <!-- Disabling the release profile that is part of the Maven Super
+                        POM, since we are using our own profile. -->
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <!-- Select release profile during release:perform. -->
+                    <releaseProfiles>release</releaseProfiles>
+                    <!-- Select release profile during release:prepare. -->
+                    <arguments>-Prelease</arguments>
+                    <!-- Release to the Central Repository. -->
+                    <goals>deploy nexus-staging:release</goals>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${maven.jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven.enforcer.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.9</version>
+                                </requireMavenVersion>
+                                <requireReleaseDeps>
+                                    <message>No Snapshots Allowed!</message>
+                                    <excludes>
+                                        <exclude>org.wattpad4j*</exclude>
+                                    </excludes>
+                                </requireReleaseDeps>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven.clean.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>de.jutzig</groupId>
+                <artifactId>github-release-plugin</artifactId>
+                <version>${github.release.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>github-upload</id>
+                        <goals>
+                            <goal>release</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <releaseName>v${project.version}</releaseName>
+                            <tag>v${project.version}</tag>
+                            <artifact>${project.build.directory}/${project.groupId}.${project.artifactId}-${project.version}.jar</artifact>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- enforce style formatting -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <formats>
+                        <format>
+                            <includes>
+                                <include>.gitattributes</include>
+                                <include>.gitignore</include>
+                            </includes>
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <tabs>true</tabs>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <java>
+                        <cleanthat>
+                            <version>2.24</version>
+                        </cleanthat>
+
+                        <eclipse>
+                            <version>4.37</version>
+                            <file>${project.parentdir}/format.xml</file>
+                        </eclipse>
+
+                        <importOrder>
+                            <order>java,javax,org,com</order>
+                            <semanticSort>true</semanticSort>
+                        </importOrder>
+
+                        <removeUnusedImports>
+                            <engine>cleanthat-javaparser-unnecessaryimport</engine>
+                        </removeUnusedImports>
+                    </java>
+
+                    <pom>
+                        <sortPom>
+                            <encoding>UTF-8</encoding>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <spaceBeforeCloseEmptyElement>false</spaceBeforeCloseEmptyElement>
+                            <keepBlankLines>true</keepBlankLines>
+                            <endWithNewline>true</endWithNewline>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <indentBlankLines>false</indentBlankLines>
+                            <indentSchemaLocation>false</indentSchemaLocation>
+                            <sortProperties>false</sortProperties>
+                        </sortPom>
+                    </pom>
+
+                    <json>
+                        <includes>
+                            <include>src/**/*.json</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/node_modules/**/*.*</exclude>
+                            <exclude>**/dist/**/*.*</exclude>
+                        </excludes>
+
+                        <gson>
+                            <indentSpaces>2</indentSpaces>
+                            <sortByKeys>false</sortByKeys>
+                            <escapeHtml>false</escapeHtml>
+                            <version>2.8.1</version>
+                        </gson>
+                    </json>
+
+                    <yaml>
+                        <includes>
+                            <include>src/**/*.yaml</include>
+                            <include>src/**/*.yml</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/node_modules/**/*.*</exclude>
+                            <exclude>**/dist/**/*.*</exclude>
+                        </excludes>
+
+                        <jackson>
+                            <version>${jackson.version}</version>
+                            <features>
+                                <INDENT_OUTPUT>true</INDENT_OUTPUT>
+                                <ORDER_MAP_ENTRIES_BY_KEYS>false</ORDER_MAP_ENTRIES_BY_KEYS>
+                            </features>
+                            <yamlFeatures>
+                                <WRITE_DOC_START_MARKER>true</WRITE_DOC_START_MARKER>
+                                <MINIMIZE_QUOTES>false</MINIMIZE_QUOTES>
+                            </yamlFeatures>
+                        </jackson>
+                    </yaml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Create javadoc jars. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.plugin.version}</version>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Sign artefacts. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.gpg.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Publish to central repositories. -->
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${sonatype.staging.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <!-- Manually inspect the staging repository in the Nexus Repository
+								Manager and trigger a release of the staging repository -->
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <!-- Publish to GitHub Releases. -->
+                    <plugin>
+                        <groupId>de.jutzig</groupId>
+                        <artifactId>github-release-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

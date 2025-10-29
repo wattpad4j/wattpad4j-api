@@ -1,0 +1,22 @@
+{
+  "lists": [
+    {
+      "id": 2,
+      "name": "2",
+      "user": {
+        "name": "User",
+        "avatar": "https://img.wattpad.com/useravatarUser.jpg",
+        "fullname": "USER",
+        "verified": false
+      },
+      "numStories": 2,
+      "sample_covers": [
+        "https://img.wattpad.com/cover/3.jpg",
+        "https://img.wattpad.com/cover/4.jpg"
+      ],
+      "cover": "https://img.wattpad.com/ccover/2.png?v=2",
+      "tags": []
+    }
+  ],
+  "total": 2
+}
