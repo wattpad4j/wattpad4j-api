@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -111,24 +110,6 @@ public class Pager<T extends HasNext<T>> implements Iterator<T> {
 	 */
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * This method is not implemented and will throw an UnsupportedOperationException if called.
-	 *
-	 * @throws UnsupportedOperationException when invoked.
-	 */
-	public List<T> first() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * This method is not implemented and will throw an UnsupportedOperationException if called.
-	 *
-	 * @throws UnsupportedOperationException when invoked.
-	 */
-	public List<T> last() {
 		throw new UnsupportedOperationException();
 	}
 

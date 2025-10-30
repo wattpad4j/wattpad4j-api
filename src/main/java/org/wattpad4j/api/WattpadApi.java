@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -15,6 +17,7 @@ import org.wattpad4j.models.WattpadStories;
 import org.wattpad4j.models.WattpadUser;
 import org.wattpad4j.util.JacksonJson;
 
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -40,7 +43,7 @@ public class WattpadApi {
 		this(WattpadConstants.BASE_URL);
 	}
 
-	public WattpadApi(final String baseUrl) {
+	public WattpadApi(@Nonnull final String baseUrl) {
 		this.baseUrl = baseUrl;
 		final ClientConfig clientConfig = new ClientConfig();
 
@@ -65,20 +68,8 @@ public class WattpadApi {
 	 * @return WattpadStories containing all the stories of the user.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public WattpadStories getStories(final String userName) throws WattpadApiException {
-		return getStories(userName, null, WattpadConstants.DEFAULT_LIMIT).all();
-	}
-
-	/**
-	 * Get a limited amount of stories of a user.
-	 *
-	 * @param userName username of the user.
-	 * @param limit    maximum amount of stories to retrieve.
-	 * @return WattpadStories containing a limited amount of the stories of the user.
-	 * @throws WattpadApiException if any error occurs.
-	 */
-	public Pager<WattpadStories> getStories(final String userName, int limit) throws WattpadApiException {
-		return getStories(userName, null, limit);
+	public WattpadStories getStories(@Nonnull final String userName) throws WattpadApiException {
+		return getStories(userName, WattpadConstants.DEFAULT_LIMIT).all();
 	}
 
 	/**
@@ -89,8 +80,9 @@ public class WattpadApi {
 	 * @return WattpadStories containing all the stories of the user with or without the parts.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public WattpadStories getStories(final String userName, final boolean includeParts) throws WattpadApiException {
-		return getStories(userName, includeParts, WattpadConstants.DEFAULT_LIMIT).all();
+	public WattpadStories getStories(@Nonnull final String userName, final boolean includeParts)
+	        throws WattpadApiException {
+		return getStories(userName, WattpadConstants.DEFAULT_LIMIT, includeParts).all();
 	}
 
 	/**
@@ -102,39 +94,40 @@ public class WattpadApi {
 	 * @return WattpadStories containing a limited amount of the stories of the user with or without the parts.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public Pager<WattpadStories> getStories(final String userName, final boolean includeParts, int limit)
+	public Pager<WattpadStories> getStories(@Nonnull final String userName, final int limit, final boolean includeParts)
 	        throws WattpadApiException {
-		return getStories(userName,
-		        includeParts ? WattpadConstants.STORY_ALL_FIELDS : WattpadConstants.STORY_NO_PART_FIELDS, limit);
+		return getStories(userName, limit,
+		        includeParts ? WattpadConstants.STORY_ALL_FIELDS : WattpadConstants.STORY_NO_PART_FIELDS);
 	}
 
 	/**
 	 * Get all the stories of a user. Limit to contain certain fields.
 	 *
-	 * @param userName    username of the user.
-	 * @param storyFields the fields of the story to include in retrieval. Defaults to all fields.
+	 * @param userName username of the user.
+	 * @param fields   the fields of the story to include in retrieval. Defaults to all fields.
 	 * @return WattpadStories containing all the stories of the user limited to only include the provided fields.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public WattpadStories getStories(final String userName, @Nullable final String storyFields)
+	public WattpadStories getStories(@Nonnull final String userName, @Nullable final String... fields)
 	        throws WattpadApiException {
-		return getStories(userName, storyFields, WattpadConstants.DEFAULT_LIMIT).all();
+		return getStories(userName, WattpadConstants.DEFAULT_LIMIT, fields).all();
 	}
 
 	/**
 	 * Get a limited amount the stories of a user. Limit to contain certain fields.
 	 *
-	 * @param userName    username of the user.
-	 * @param storyFields the fields of the story to include in retrieval. Defaults to all fields.
-	 * @param limit       maximum amount of stories to retrieve.
+	 * @param userName username of the user.
+	 * @param fields   the fields of the story to include in retrieval. Defaults to all fields.
+	 * @param limit    maximum amount of stories to retrieve.
 	 * @return WattpadStories containing a limited amount of the stories of the user limited to only include the
 	 *         provided fields.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public Pager<WattpadStories> getStories(final String userName, @Nullable final String storyFields, int limit)
+	public Pager<WattpadStories> getStories(@Nonnull final String userName, final int limit,
+	        @Nullable final String... fields)
 	        throws WattpadApiException {
-		final String fields = storyFields == null ? WattpadConstants.STORY_ALL_FIELDS : storyFields;
-		return new Pager<>(this, WattpadStories.class, limit, WattpadConstants.FIELDS_FUNCTION.apply("stories", fields),
+		return new Pager<>(this, WattpadStories.class, limit,
+		        WattpadConstants.FIELDS_FUNCTION.apply("stories", getFields(WattpadConstants.STORY_ALL_FIELDS, fields)),
 		        "v4",
 		        "users", userName,
 		        "stories", "published");
@@ -148,52 +141,40 @@ public class WattpadApi {
 	 * @return WattpadLists containing all the lists of the user.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public WattpadLists getLists(final String userName) throws WattpadApiException {
-		return getLists(userName, null, WattpadConstants.DEFAULT_LIMIT).all();
-	}
-
-	/**
-	 * Get a limited amount of lists of a user.
-	 *
-	 * @param userName username of the user.
-	 * @param limit    maximum amount of lists to retrieve.
-	 * @return WattpadLists containing a limited amount of the lists of the user.
-	 * @throws WattpadApiException if any error occurs.
-	 */
-	public Pager<WattpadLists> getLists(final String userName, int limit) throws WattpadApiException {
-		return getLists(userName, null, limit);
+	public WattpadLists getLists(@Nonnull final String userName) throws WattpadApiException {
+		return getLists(userName, WattpadConstants.DEFAULT_LIMIT).all();
 	}
 
 	/**
 	 * Get all the lists of a user. Limit to contain certain fields.
 	 *
-	 * @param userName   username of the user.
-	 * @param listFields the fields of the list to include in retrieval. Defaults to all fields.
+	 * @param userName username of the user.
+	 * @param fields   the fields of the list to include in retrieval. Defaults to all fields.
 	 * @return WattpadLists containing all the lists of the user limited to only include the provided fields.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public WattpadLists getLists(final String userName, @Nullable final String listFields) throws WattpadApiException {
-		return getLists(userName, listFields, WattpadConstants.DEFAULT_LIMIT).all();
+	public WattpadLists getLists(@Nonnull final String userName, @Nullable final String... fields)
+	        throws WattpadApiException {
+		return getLists(userName, WattpadConstants.DEFAULT_LIMIT, fields).all();
 	}
 
 	/**
 	 * Get a limited amount of lists of a user. Limit to contain certain fields.
 	 *
-	 * @param userName   username of the user.
-	 * @param listFields the fields of the list to include in retrieval. Defaults to all fields
-	 * @param limit      maximum amount of lists to retrieve.
+	 * @param userName username of the user.
+	 * @param fields   the fields of the list to include in retrieval. Defaults to all fields
+	 * @param limit    maximum amount of lists to retrieve.
 	 * @return WattpadLists containing a limited amount of the lists of the user limited to only include the provided
 	 *         fields.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public Pager<WattpadLists> getLists(final String userName, @Nullable final String listFields, int limit)
+	public Pager<WattpadLists> getLists(@Nonnull final String userName, int limit, @Nullable final String... fields)
 	        throws WattpadApiException {
-		final String fields = listFields == null ? WattpadConstants.LIST_ALL_FIELDS : listFields;
-		return new Pager<>(this, WattpadLists.class, limit, WattpadConstants.FIELDS_FUNCTION.apply("lists", fields),
+		return new Pager<>(this, WattpadLists.class, limit,
+		        WattpadConstants.FIELDS_FUNCTION.apply("lists", getFields(WattpadConstants.LIST_ALL_FIELDS, fields)),
 		        "api",
 		        "v3", "users", userName,
 		        "lists");
-
 	}
 
 	/**
@@ -203,9 +184,28 @@ public class WattpadApi {
 	 * @return WattpadUser containing the user.
 	 * @throws WattpadApiException if any error occurs.
 	 */
-	public WattpadUser getUser(final String userName) throws WattpadApiException {
+	public WattpadUser getUser(@Nonnull final String userName) throws WattpadApiException {
 		Response response = get(Map.of(), "api", "v3", "users", userName);
 		return readValue(response, WattpadUser.class);
+	}
+
+	/**
+	 * Get the fields that should be used in the API. If it's null, or only contains null values, return the default
+	 * fields; otherwise use the fields.
+	 * 
+	 * @param defaultFields Default fields to use.
+	 * @param fields        fields the user passed to include in the API call.
+	 * @return fields to use in the API call;
+	 */
+	private String[] getFields(final String[] defaultFields, String... fields) {
+		if (fields == null) {
+			return defaultFields;
+		}
+		fields = Arrays.stream(fields).filter(Objects::nonNull).toArray(String[]::new);
+		if (fields.length == 0) {
+			return defaultFields;
+		}
+		return fields;
 	}
 
 	@SuppressWarnings("SameParameterValue")

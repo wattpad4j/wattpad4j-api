@@ -49,10 +49,8 @@ public class WattpadApiTest {
 		WattpadStories wattpadStories = wattpadApi.getStories("User");
 		Assertions.assertEquals(2, wattpadStories.getTotal());
 		Assertions.assertEquals(2, wattpadStories.getStories().size());
-
 		Assertions.assertEquals(2, wattpadStories.getStories().getFirst().getNumParts());
 		Assertions.assertEquals(2, wattpadStories.getStories().getFirst().getParts().size());
-
 		Assertions.assertFalse(wattpadStories.toString().isEmpty());
 
 		// new FileInputStream since previous is closed
@@ -60,6 +58,24 @@ public class WattpadApiTest {
 		Mockito.when(response.getEntity()).thenReturn(storiesAll);
 		WattpadStories wattpadStoriesWithFlag = wattpadApi.getStories("User", true);
 		Assertions.assertEquals(wattpadStories, wattpadStoriesWithFlag);
+
+		// new FileInputStream since previous is closed
+		storiesAll = new FileInputStream(storiesAllFile);
+		Mockito.when(response.getEntity()).thenReturn(storiesAll);
+		WattpadStories wattpadStoriesWithNull = wattpadApi.getStories("User", (String) null);
+		Assertions.assertEquals(wattpadStories, wattpadStoriesWithNull);
+
+		// new FileInputStream since previous is closed
+		storiesAll = new FileInputStream(storiesAllFile);
+		Mockito.when(response.getEntity()).thenReturn(storiesAll);
+		WattpadStories wattpadStoriesIsNull = wattpadApi.getStories("User", (String[]) null);
+		Assertions.assertEquals(wattpadStories, wattpadStoriesIsNull);
+
+		// new FileInputStream since previous is closed
+		storiesAll = new FileInputStream(storiesAllFile);
+		Mockito.when(response.getEntity()).thenReturn(storiesAll);
+		WattpadStories wattpadStoriesEmpty = wattpadApi.getStories("User", new String[] {});
+		Assertions.assertEquals(wattpadStories, wattpadStoriesEmpty);
 	}
 
 	@Test
@@ -72,10 +88,8 @@ public class WattpadApiTest {
 		WattpadStories wattpadStories = wattpadApi.getStories("User", false);
 		Assertions.assertEquals(2, wattpadStories.getTotal());
 		Assertions.assertEquals(2, wattpadStories.getStories().size());
-
 		Assertions.assertEquals(2, wattpadStories.getStories().getFirst().getNumParts());
 		Assertions.assertNull(wattpadStories.getStories().getFirst().getParts());
-
 		Assertions.assertFalse(wattpadStories.toString().isEmpty());
 	}
 
@@ -85,13 +99,11 @@ public class WattpadApiTest {
 		        Path.of("src/test/resources/stories/stories_id_title.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(storiesIdTitle);
 
-		WattpadStories wattpadStories = wattpadApi.getStories("User", "id,title");
+		WattpadStories wattpadStories = wattpadApi.getStories("User", "id", "title");
 		Assertions.assertEquals(2, wattpadStories.getTotal());
 		Assertions.assertEquals(2, wattpadStories.getStories().size());
-
 		Assertions.assertNull(wattpadStories.getStories().getFirst().getNumParts());
 		Assertions.assertNull(wattpadStories.getStories().getFirst().getParts());
-
 		Assertions.assertFalse(wattpadStories.toString().isEmpty());
 	}
 
@@ -130,7 +142,6 @@ public class WattpadApiTest {
 		WattpadLists wattpadLists = wattpadApi.getLists("User");
 		Assertions.assertEquals(2, wattpadLists.getTotal());
 		Assertions.assertEquals(2, wattpadLists.getLists().size());
-
 		Assertions.assertFalse(wattpadLists.toString().isEmpty());
 	}
 
@@ -140,12 +151,10 @@ public class WattpadApiTest {
 		        Path.of("src/test/resources/lists/lists_id_name.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(listsIdName);
 
-		WattpadLists wattpadLists = wattpadApi.getLists("User", "id,name");
+		WattpadLists wattpadLists = wattpadApi.getLists("User", "id", "name");
 		Assertions.assertEquals(2, wattpadLists.getTotal());
 		Assertions.assertEquals(2, wattpadLists.getLists().size());
-
 		Assertions.assertNull(wattpadLists.getLists().getFirst().getNumStories());
-
 		Assertions.assertFalse(wattpadLists.toString().isEmpty());
 	}
 

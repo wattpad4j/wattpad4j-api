@@ -1,4 +1,4 @@
-name: Publish wattpad4j release
+name: Publish Wattpad4J release
 
 on:
   release:

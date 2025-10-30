@@ -1,4 +1,4 @@
-name: Create wattpad4j Release
+name: Create Wattpad4J Release
 
 on:
   workflow_dispatch:
@@ -17,9 +17,9 @@ jobs:
 
   # Validate job will check if the current version is actually a *-SNAPSHOT, if not, this flow cannot be used.
   # Outputs:
-  #   `version`: the current version of the wattpad4j
+  #   `version`: the current version of the Wattpad4J
   validate:
-    # restrict access to this job to prevent accidental release triggers from yarisvt
+    # restrict access to this job
     if: contains('["yarisvt"]', github.actor)
     runs-on: ubuntu-24.04
     outputs:
@@ -97,7 +97,7 @@ jobs:
           git tag ${{ env.RELEASE_VERSION }}
           git push origin ${{ env.RELEASE_VERSION }}
 
-  # Create a release in Github with the same version as the wattpad4j release.
+  # Create a release in GitHub with the same version as the Wattpad4J release.
   github-release:
     needs: set-version
     runs-on: ubuntu-24.04
@@ -114,7 +114,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Changes the version of wattpad4j to the next desired *-SNAPSHOT version.
+  # Changes the version of Wattpad4J to the next desired *-SNAPSHOT version.
   # If the postfix was set, then the version will be reverted to the one discovered in the `validate`-job,
   # otherwise the Maven versions plugin is used to set the next snapshot version.
   prepare-next:

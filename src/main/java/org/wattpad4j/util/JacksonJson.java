@@ -37,7 +37,6 @@ public class JacksonJson extends JacksonJaxbJsonProvider implements ContextResol
 	private final ObjectMapper objectMapper;
 
 	public JacksonJson() {
-
 		objectMapper = new ObjectMapper();
 
 		objectMapper.setDefaultPropertyInclusion(Include.NON_NULL);
@@ -56,7 +55,7 @@ public class JacksonJson extends JacksonJaxbJsonProvider implements ContextResol
 	}
 
 	@Override
-	public ObjectMapper getContext(Class<?> objectType) {
+	public ObjectMapper getContext(final Class<?> objectType) {
 		return objectMapper;
 	}
 
