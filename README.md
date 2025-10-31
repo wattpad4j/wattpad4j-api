@@ -96,3 +96,9 @@ Get information about a user.
 // Get information of a user.
 WattpadUser wattpadUser = wattpadApi.getUser("USER");
 ```
+
+
+### Credits
+
+Heavily inspired by [Gitlab4J&trade;](https://github.com/gitlab4j/gitlab4j-api). The `Pager` and `WattpadApiException` classes are copied from Gitlab4J&trade; and adapted to be used in this project.
+Also, a lot of code in `WattpadApi` that makes the REST calls and deals with the response is copied from Gitlab4J&trade; and adapted.

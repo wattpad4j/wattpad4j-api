@@ -31,6 +31,10 @@ import lombok.Setter;
 
 /**
  * This class provides a simplified interface to the Wattpad API.
+ * <p>
+ * All the code dealing with the REST calls and Responses are copied from <a href=
+ * "https://github.com/gitlab4j/gitlab4j-api/blob/main/gitlab4j-api/src/main/java/org/gitlab4j/api/AbstractApi.java">Wattpad4J&trade;</a>
+ * and adapted to use in this project.
  */
 public class WattpadApi {
 
@@ -269,7 +273,7 @@ public class WattpadApi {
 	 * @return original response if the response status is expected.
 	 * @throws WattpadApiException if HTTP status is not as expected.
 	 */
-	protected Response validate(Response response) throws WattpadApiException {
+	protected Response validate(final Response response) throws WattpadApiException {
 		int responseCode = response.getStatus();
 		if (responseCode != Response.Status.OK.getStatusCode()) {
 			try {

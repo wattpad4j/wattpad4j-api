@@ -7,6 +7,14 @@ import org.wattpad4j.models.WattpadError;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+/**
+ * This is the exception that will be thrown if any exception occurs while communicating with a Wattpad endpoint.
+ * <p>
+ * Copied from <a href=
+ * "https://github.com/gitlab4j/gitlab4j-api/blob/main/gitlab4j-api/src/main/java/org/gitlab4j/api/GitLabApiException.java">GitLab4J&trade;</a>
+ * and adapted to use in this project.
+ *
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class WattpadApiException extends Exception {

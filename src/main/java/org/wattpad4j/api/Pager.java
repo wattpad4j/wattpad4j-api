@@ -19,6 +19,10 @@ import jakarta.ws.rs.core.Response;
  * This class defines an Iterator implementation that is used as a paging iterator for all API methods that hav a
  * nextUrl property. It hides the details of interacting with the Wattpad API when paging is involved simplifying
  * accessing the objects
+ * <p>
+ * Copied from <a href=
+ * "https://github.com/gitlab4j/gitlab4j-api/blob/main/gitlab4j-api/src/main/java/org/gitlab4j/api/Pager.java">GitLab4J&trade;</a>
+ * and adapted to use in this project.
  *
  * @param <T> the wattpad4j type
  */
