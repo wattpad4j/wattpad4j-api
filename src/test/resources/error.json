@@ -1,0 +1,8 @@
+{
+  "error_code": 1014,
+  "error_type": "NotFound",
+  "message": "User not found",
+  "fields": [
+    "name"
+  ]
+}

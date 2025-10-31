@@ -12,6 +12,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.wattpad4j.models.WattpadError;
 import org.wattpad4j.models.WattpadLists;
 import org.wattpad4j.models.WattpadStories;
 import org.wattpad4j.models.WattpadUser;
@@ -185,14 +186,14 @@ public class WattpadApi {
 	 * @throws WattpadApiException if any error occurs.
 	 */
 	public WattpadUser getUser(@Nonnull final String userName) throws WattpadApiException {
-		Response response = get(Map.of(), "api", "v3", "users", userName);
+		Response response = validate(get(Map.of(), "api", "v3", "users", userName));
 		return readValue(response, WattpadUser.class);
 	}
 
 	/**
 	 * Get the fields that should be used in the API. If it's null, or only contains null values, return the default
 	 * fields; otherwise use the fields.
-	 * 
+	 *
 	 * @param defaultFields Default fields to use.
 	 * @param fields        fields the user passed to include in the API call.
 	 * @return fields to use in the API call;
@@ -209,27 +210,12 @@ public class WattpadApi {
 	}
 
 	@SuppressWarnings("SameParameterValue")
-	private <T> T readValue(final Response response, final Class<T> clazz) {
+	private <T> T readValue(final Response response, final Class<T> clazz) throws WattpadApiException {
 		try {
 			return JacksonJson.mapper.readValue((InputStream) response.getEntity(), clazz);
 		} catch (IOException e) {
 			throw new WattpadApiException(e);
 		}
-	}
-
-	/**
-	 * Wraps an exception in a WattpadApiException if needed.
-	 *
-	 * @param thrown the exception that should be wrapped.
-	 * @return either the untouched WattpadApiException or a new WattpadApiException wrapping a non-WattpadApiException.
-	 * @throws WattpadApiException if any error occurs.
-	 */
-	private WattpadApiException handle(final Exception thrown) throws WattpadApiException {
-		if (thrown instanceof WattpadApiException wattpadApiException) {
-			return wattpadApiException;
-		}
-
-		return new WattpadApiException(thrown);
 	}
 
 	/**
@@ -244,7 +230,7 @@ public class WattpadApi {
 	protected Response get(final Map<String, String> queryParams, final Object... pathArgs) throws WattpadApiException {
 		try {
 			final URL url = getApiUrl(pathArgs);
-			return get(queryParams, url);
+			return validate(get(queryParams, url));
 		} catch (Exception e) {
 			throw handle(e);
 		}
@@ -276,15 +262,38 @@ public class WattpadApi {
 		return builder;
 	}
 
-	private String appendPathArgs(final Object... pathArgs) {
-		final StringBuilder urlBuilder = new StringBuilder(this.baseUrl);
-		for (Object pathArg : pathArgs) {
-			if (pathArg != null) {
-				urlBuilder.append("/");
-				urlBuilder.append(pathArg);
+	/**
+	 * Validates response the response from the server is OK; if it's not will throw a GitLabApiException.
+	 *
+	 * @param response response.
+	 * @return original response if the response status is expected.
+	 * @throws WattpadApiException if HTTP status is not as expected.
+	 */
+	protected Response validate(Response response) throws WattpadApiException {
+		int responseCode = response.getStatus();
+		if (responseCode != Response.Status.OK.getStatusCode()) {
+			try {
+				throw new WattpadApiException(
+				        JacksonJson.mapper.readValue((InputStream) response.getEntity(), WattpadError.class));
+			} catch (IOException e) {
+				throw new WattpadApiException(response.getStatusInfo().getReasonPhrase());
 			}
 		}
-		return urlBuilder.toString();
+		return response;
+	}
+
+	/**
+	 * Wraps an exception in a WattpadApiException if needed.
+	 *
+	 * @param thrown the exception that should be wrapped.
+	 * @return either the untouched WattpadApiException or a new WattpadApiException wrapping a non-WattpadApiException.
+	 */
+	private WattpadApiException handle(final Exception thrown) {
+		if (thrown instanceof WattpadApiException wattpadApiException) {
+			return wattpadApiException;
+		}
+
+		return new WattpadApiException(thrown);
 	}
 
 	/**
@@ -297,5 +306,16 @@ public class WattpadApi {
 	private URL getApiUrl(final Object... pathArgs) throws IOException {
 		final String url = appendPathArgs(pathArgs);
 		return URI.create(url).toURL();
+	}
+
+	private String appendPathArgs(final Object... pathArgs) {
+		final StringBuilder urlBuilder = new StringBuilder(this.baseUrl);
+		for (Object pathArg : pathArgs) {
+			if (pathArg != null) {
+				urlBuilder.append("/");
+				urlBuilder.append(pathArg);
+			}
+		}
+		return urlBuilder.toString();
 	}
 }

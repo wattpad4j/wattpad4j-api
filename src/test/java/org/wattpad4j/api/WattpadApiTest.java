@@ -1,8 +1,10 @@
 package org.wattpad4j.api;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Assertions;
@@ -41,10 +43,20 @@ public class WattpadApiTest {
 	}
 
 	@Test
-	public void testStoriesAll() throws IOException {
+	void testNotFound() {
+		Mockito.when(response.getEntity())
+		        .thenReturn(new ByteArrayInputStream("NOT_JSON".getBytes(StandardCharsets.UTF_8)));
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.NOT_FOUND.getStatusCode());
+		Mockito.when(response.getStatusInfo()).thenReturn(Response.Status.NOT_FOUND);
+		Assertions.assertThrows(WattpadApiException.class, () -> wattpadApi.getUser("NOT_FOUND"));
+	}
+
+	@Test
+	public void testStoriesAll() throws IOException, WattpadApiException {
 		File storiesAllFile = Path.of("src/test/resources/stories/stories_all.json").toFile();
 		FileInputStream storiesAll = new FileInputStream(storiesAllFile);
 		Mockito.when(response.getEntity()).thenReturn(storiesAll);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		WattpadStories wattpadStories = wattpadApi.getStories("User");
 		Assertions.assertEquals(2, wattpadStories.getTotal());
@@ -79,11 +91,11 @@ public class WattpadApiTest {
 	}
 
 	@Test
-	public void testStoriesAllWithoutPart() throws IOException {
+	public void testStoriesAllWithoutPart() throws IOException, WattpadApiException {
 		FileInputStream storiesWithoutPart = new FileInputStream(
 		        Path.of("src/test/resources/stories/stories_all_without_part.json").toFile());
-
 		Mockito.when(response.getEntity()).thenReturn(storiesWithoutPart);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		WattpadStories wattpadStories = wattpadApi.getStories("User", false);
 		Assertions.assertEquals(2, wattpadStories.getTotal());
@@ -94,10 +106,11 @@ public class WattpadApiTest {
 	}
 
 	@Test
-	public void testStoriesIdTitleOnly() throws IOException {
+	public void testStoriesIdTitleOnly() throws IOException, WattpadApiException {
 		FileInputStream storiesIdTitle = new FileInputStream(
 		        Path.of("src/test/resources/stories/stories_id_title.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(storiesIdTitle);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		WattpadStories wattpadStories = wattpadApi.getStories("User", "id", "title");
 		Assertions.assertEquals(2, wattpadStories.getTotal());
@@ -108,36 +121,92 @@ public class WattpadApiTest {
 	}
 
 	@Test
-	public void testStoriesPager() throws IOException {
+	public void testStoriesPagerPerOnePage() throws IOException, WattpadApiException {
 		FileInputStream firstStories = new FileInputStream(
-		        Path.of("src/test/resources/stories/stories_first.json").toFile());
+		        Path.of("src/test/resources/stories/per_one_page/stories_first.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(firstStories);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		Pager<WattpadStories> wattpadStories = wattpadApi.getStories("User", 1);
 		Assertions.assertTrue(wattpadStories.hasNext());
 		WattpadStories first = wattpadStories.next();
-		Assertions.assertEquals(2, first.getTotal());
+		Assertions.assertEquals(3, first.getTotal());
 		Assertions.assertEquals(1, first.getStories().size());
 		Assertions.assertEquals("1", first.getStories().getFirst().getId());
+		Assertions.assertNotNull(first.getNextUrl());
 		Assertions.assertFalse(first.toString().isEmpty());
 
 		FileInputStream secondStories = new FileInputStream(
-		        Path.of("src/test/resources/stories/stories_second.json").toFile());
+		        Path.of("src/test/resources/stories/per_one_page/stories_second.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(secondStories);
 		Assertions.assertTrue(wattpadStories.hasNext());
 		WattpadStories second = wattpadStories.next();
-		Assertions.assertEquals(2, second.getTotal());
+		Assertions.assertEquals(3, second.getTotal());
 		Assertions.assertEquals(1, second.getStories().size());
 		Assertions.assertEquals("2", second.getStories().getFirst().getId());
+		Assertions.assertNotNull(second.getNextUrl());
+		Assertions.assertFalse(second.toString().isEmpty());
+
+		FileInputStream thirdStories = new FileInputStream(
+		        Path.of("src/test/resources/stories/per_one_page/stories_third.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(thirdStories);
+		Assertions.assertTrue(wattpadStories.hasNext());
+		WattpadStories third = wattpadStories.next();
+		Assertions.assertEquals(3, third.getTotal());
+		Assertions.assertEquals(1, third.getStories().size());
+		Assertions.assertEquals("3", third.getStories().getFirst().getId());
+		Assertions.assertNull(third.getNextUrl());
+		Assertions.assertFalse(third.toString().isEmpty());
+
+		Assertions.assertFalse(wattpadStories.hasNext());
+	}
+
+	@Test
+	public void testStoriesPagerPerTwoPages() throws IOException, WattpadApiException {
+		FileInputStream firstStories = new FileInputStream(
+		        Path.of("src/test/resources/stories/per_two_pages/stories_first.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(firstStories);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
+
+		Pager<WattpadStories> wattpadStories = wattpadApi.getStories("User", 2);
+		Assertions.assertTrue(wattpadStories.hasNext());
+		WattpadStories first = wattpadStories.next();
+		Assertions.assertEquals(3, first.getTotal());
+		Assertions.assertEquals(2, first.getStories().size());
+		Assertions.assertEquals("1", first.getStories().getFirst().getId());
+		Assertions.assertEquals("2", first.getStories().getLast().getId());
+		Assertions.assertNotNull(first.getNextUrl());
+		Assertions.assertFalse(first.toString().isEmpty());
+
+		FileInputStream secondStories = new FileInputStream(
+		        Path.of("src/test/resources/stories/per_two_pages/stories_second.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(secondStories);
+		Assertions.assertTrue(wattpadStories.hasNext());
+		WattpadStories second = wattpadStories.next();
+		Assertions.assertEquals(3, second.getTotal());
+		Assertions.assertEquals(1, second.getStories().size());
+		Assertions.assertEquals("3", second.getStories().getFirst().getId());
+		Assertions.assertNull(second.getNextUrl());
 		Assertions.assertFalse(second.toString().isEmpty());
 
 		Assertions.assertFalse(wattpadStories.hasNext());
 	}
 
 	@Test
-	public void testListsAll() throws IOException {
+	public void testStoriesUserNotFound() throws IOException {
+		FileInputStream firstStories = new FileInputStream(
+		        Path.of("src/test/resources/error.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(firstStories);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.BAD_REQUEST.getStatusCode());
+
+		Assertions.assertThrows(WattpadApiException.class, () -> wattpadApi.getStories("NON-EXISTENT"));
+	}
+
+	@Test
+	public void testListsAll() throws IOException, WattpadApiException {
 		FileInputStream listsAll = new FileInputStream(Path.of("src/test/resources/lists/lists_all.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(listsAll);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		WattpadLists wattpadLists = wattpadApi.getLists("User");
 		Assertions.assertEquals(2, wattpadLists.getTotal());
@@ -146,10 +215,11 @@ public class WattpadApiTest {
 	}
 
 	@Test
-	public void testListsIdNameOnly() throws IOException {
+	public void testListsIdNameOnly() throws IOException, WattpadApiException {
 		FileInputStream listsIdName = new FileInputStream(
 		        Path.of("src/test/resources/lists/lists_id_name.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(listsIdName);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		WattpadLists wattpadLists = wattpadApi.getLists("User", "id", "name");
 		Assertions.assertEquals(2, wattpadLists.getTotal());
@@ -159,38 +229,114 @@ public class WattpadApiTest {
 	}
 
 	@Test
-	public void testListsPager() throws IOException {
-		FileInputStream firstLists = new FileInputStream(Path.of("src/test/resources/lists/lists_first.json").toFile());
+	public void testListsPagerPerOnePage() throws IOException, WattpadApiException {
+		FileInputStream firstLists = new FileInputStream(
+		        Path.of("src/test/resources/lists/per_one_page/lists_first.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(firstLists);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		Pager<WattpadLists> wattpadLists = wattpadApi.getLists("User", 1);
 		Assertions.assertTrue(wattpadLists.hasNext());
 		WattpadLists first = wattpadLists.next();
-		Assertions.assertEquals(2, first.getTotal());
+		Assertions.assertEquals(3, first.getTotal());
 		Assertions.assertEquals(1, first.getLists().size());
-		Assertions.assertEquals("1", first.getLists().getFirst().getId());
+		Assertions.assertEquals(1, first.getLists().getFirst().getId());
+		Assertions.assertNotNull(first.getNextUrl());
 		Assertions.assertFalse(first.toString().isEmpty());
 
 		FileInputStream secondLists = new FileInputStream(
-		        Path.of("src/test/resources/lists/lists_second.json").toFile());
+		        Path.of("src/test/resources/lists/per_one_page/lists_second.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(secondLists);
 		Assertions.assertTrue(wattpadLists.hasNext());
 		WattpadLists second = wattpadLists.next();
-		Assertions.assertEquals(2, second.getTotal());
+		Assertions.assertEquals(3, second.getTotal());
 		Assertions.assertEquals(1, second.getLists().size());
-		Assertions.assertEquals("2", second.getLists().getFirst().getId());
+		Assertions.assertEquals(2, second.getLists().getFirst().getId());
+		Assertions.assertNotNull(second.getNextUrl());
+		Assertions.assertFalse(second.toString().isEmpty());
+
+		FileInputStream thirdLists = new FileInputStream(
+		        Path.of("src/test/resources/lists/per_one_page/lists_third.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(thirdLists);
+		Assertions.assertTrue(wattpadLists.hasNext());
+		WattpadLists third = wattpadLists.next();
+		Assertions.assertEquals(3, third.getTotal());
+		Assertions.assertEquals(1, third.getLists().size());
+		Assertions.assertEquals(3, third.getLists().getFirst().getId());
+		Assertions.assertNull(third.getNextUrl());
+		Assertions.assertFalse(third.toString().isEmpty());
+
+		Assertions.assertFalse(wattpadLists.hasNext());
+	}
+
+	@Test
+	public void testListsPagerPerTwoPages() throws IOException, WattpadApiException {
+		FileInputStream firstLists = new FileInputStream(
+		        Path.of("src/test/resources/lists/per_two_pages/lists_first.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(firstLists);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
+
+		Pager<WattpadLists> wattpadLists = wattpadApi.getLists("User", 2);
+		Assertions.assertTrue(wattpadLists.hasNext());
+		WattpadLists first = wattpadLists.next();
+		Assertions.assertEquals(3, first.getTotal());
+		Assertions.assertEquals(2, first.getLists().size());
+		Assertions.assertEquals(1, first.getLists().getFirst().getId());
+		Assertions.assertEquals(2, first.getLists().getLast().getId());
+		Assertions.assertNotNull(first.getNextUrl());
+		Assertions.assertFalse(first.toString().isEmpty());
+
+		FileInputStream secondLists = new FileInputStream(
+		        Path.of("src/test/resources/lists/per_two_pages/lists_second.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(secondLists);
+		Assertions.assertTrue(wattpadLists.hasNext());
+		WattpadLists second = wattpadLists.next();
+		Assertions.assertEquals(3, second.getTotal());
+		Assertions.assertEquals(1, second.getLists().size());
+		Assertions.assertEquals(3, second.getLists().getFirst().getId());
+		Assertions.assertNotNull(second.getNextUrl());
 		Assertions.assertFalse(second.toString().isEmpty());
 
 		Assertions.assertFalse(wattpadLists.hasNext());
 	}
 
 	@Test
-	public void testUser() throws IOException {
+	public void testListsUserNotFound() throws IOException {
+		FileInputStream firstStories = new FileInputStream(
+		        Path.of("src/test/resources/error.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(firstStories);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.BAD_REQUEST.getStatusCode());
+
+		Assertions.assertThrows(WattpadApiException.class, () -> wattpadApi.getLists("NON-EXISTENT"), "User not found");
+	}
+
+	@Test
+	public void testUser() throws IOException, WattpadApiException {
 		FileInputStream user = new FileInputStream(Path.of("src/test/resources/user/user.json").toFile());
 		Mockito.when(response.getEntity()).thenReturn(user);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.OK.getStatusCode());
 
 		WattpadUser wattpadUser = wattpadApi.getUser("User");
 		Assertions.assertEquals("username", wattpadUser.getUsername());
 		Assertions.assertFalse(wattpadUser.toString().isEmpty());
+	}
+
+	@Test
+	public void testUserInvalidJson() throws IOException {
+		FileInputStream user = new FileInputStream(Path.of("src/test/resources/error.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(user);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.BAD_REQUEST.getStatusCode());
+
+		Assertions.assertThrows(WattpadApiException.class, () -> wattpadApi.getUser("User"));
+	}
+
+	@Test
+	public void testUserNotFound() throws IOException {
+		FileInputStream firstStories = new FileInputStream(
+		        Path.of("src/test/resources/error.json").toFile());
+		Mockito.when(response.getEntity()).thenReturn(firstStories);
+		Mockito.when(response.getStatus()).thenReturn(Response.Status.BAD_REQUEST.getStatusCode());
+
+		Assertions.assertThrows(WattpadApiException.class, () -> wattpadApi.getUser("NON-EXISTENT"));
 	}
 }

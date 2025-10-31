@@ -33,11 +33,16 @@ public class WattpadLists implements HasNext<WattpadLists>, Serializable {
 	private URL nextUrl;
 
 	@Override
-	public WattpadLists merge(@Nullable WattpadLists prev) {
-		if (prev == null) {
+	public Integer getCurrentTotalElements() {
+		return lists == null ? 0 : lists.size();
+	}
+
+	@Override
+	public WattpadLists merge(@Nullable WattpadLists next) {
+		if (next == null || next == this) {
 			return this;
 		}
-		List<WattpadList> lists = new ArrayList<>(prev.lists);
+		List<WattpadList> lists = new ArrayList<>(next.lists);
 		lists.addAll(this.lists);
 		return new WattpadLists(lists, this.total, this.nextUrl);
 	}

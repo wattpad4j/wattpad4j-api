@@ -1,6 +1,87 @@
 {
   "stories": [
     {
+      "id": "1",
+      "title": "Title",
+      "length": 5,
+      "createDate": "2020-10-16T14:40:18Z",
+      "modifyDate": "2025-10-26T18:31:12Z",
+      "voteCount": 54,
+      "commentCount": 12,
+      "language": {
+        "id": 1,
+        "name": "English"
+      },
+      "user": {
+        "name": "User",
+        "avatar": "https://img.wattpad.com/useravatarUser.jpg",
+        "fullname": "USER",
+        "verified": false
+      },
+      "description": "description",
+      "cover": "https://img.wattpad.com/cover/1.jpg",
+      "cover_timestamp": "2025-05-18T10:38:29Z",
+      "completed": false,
+      "categories": [
+        0
+      ],
+      "tags": [
+        "tag1",
+        "tag2"
+      ],
+      "rating": 1,
+      "mature": true,
+      "copyright": 1,
+      "url": "https://www.wattpad.com/story/1",
+      "firstPartId": 1,
+      "numParts": 2,
+      "readerBrowseEligibility": {
+        "eligible": true
+      },
+      "firstPublishedPart": {
+        "id": 1,
+        "createDate": "2021-09-14T19:56:41Z"
+      },
+      "lastPublishedPart": {
+        "id": 2,
+        "createDate": "2025-10-26T18:31:12Z"
+      },
+      "parts": [
+        {
+          "id": 1,
+          "title": "Title 1",
+          "url": "https://www.wattpad.com/1",
+          "rating": 0,
+          "draft": false,
+          "modifyDate": "2024-03-10T20:48:21Z",
+          "createDate": "2021-09-14T19:56:41Z",
+          "length": 4,
+          "videoId": "1",
+          "photoUrl": "",
+          "commentCount": 5,
+          "voteCount": 7,
+          "readCount": 8
+        },
+        {
+          "id": 2,
+          "title": "Title 2",
+          "url": "https://www.wattpad.com/2",
+          "rating": 0,
+          "draft": false,
+          "modifyDate": "2025-10-26T18:31:12Z",
+          "createDate": "2025-10-26T18:31:12Z",
+          "length": 7,
+          "videoId": "",
+          "photoUrl": "https://www.watpad.com/photo",
+          "commentCount": 5,
+          "voteCount": 132,
+          "readCount": 3
+        }
+      ],
+      "deleted": false,
+      "readCount": 5
+    },
+    {
       "id": "2",
       "title": "Title",
       "length": 5,

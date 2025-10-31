@@ -1,7 +1,5 @@
 package org.wattpad4j.models;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.List;
 
 import org.wattpad4j.util.JacksonJson;
@@ -15,25 +13,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * @author Yaris van Thiel
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@JsonPropertyOrder({ "id", "name", "user", "numStories", "sampleCovers", "cover", "tags" })
-public class WattpadList implements Serializable {
+@JsonPropertyOrder({ "errorCode", "errorType", "message", "fields" })
+public class WattpadError {
 
-	@Serial
-	private static final long serialVersionUID = 1L;
+	@JsonProperty("error_code")
+	private Integer errorCode;
 
-	private Integer id;
-	private String name;
-	private WattpadShortUser user;
-	private Integer numStories;
-	@JsonProperty("sample_covers")
-	private List<String> sampleCovers;
-	private String cover;
-	private List<String> tags;
+	@JsonProperty("error_type")
+	private String errorType;
+
+	private String message;
+
+	private List<String> fields;
 
 	@Override
 	public String toString() {

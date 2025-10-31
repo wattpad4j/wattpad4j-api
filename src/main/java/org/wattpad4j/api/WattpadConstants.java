@@ -34,5 +34,5 @@ public final class WattpadConstants {
 
 	// always include total and nextUrl
 	public static final BiFunction<String, String[], String> FIELDS_FUNCTION = (item, fields) -> item + "("
-	        + String.join("", fields) + "),total,nextUrl";
+	        + String.join(",", fields) + "),total,nextUrl";
 }

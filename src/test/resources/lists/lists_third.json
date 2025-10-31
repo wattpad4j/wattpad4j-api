@@ -1,7 +1,7 @@
 {
   "lists": [
     {
-      "id": 1,
+      "id": 3,
       "name": "Name",
       "user": {
         "name": "User",
@@ -20,6 +20,5 @@
       ]
     }
   ],
-  "total": 3,
-  "nextUrl": "https://non-existant.com/api/v3/users/User/lists?offset=1&limit=1&fields=a"
+  "total": 3
 }

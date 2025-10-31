@@ -1,7 +1,7 @@
 {
   "lists": [
     {
-      "id": 1,
+      "id": 3,
       "name": "Name",
       "user": {
         "name": "User",
@@ -9,7 +9,7 @@
         "fullname": "USER",
         "verified": false
       },
-      "numStories": 1,
+      "numStories": 4,
       "sample_covers": [
         "https://img.wattpad.com/cover/1.jpg"
       ],
@@ -20,6 +20,5 @@
       ]
     }
   ],
-  "total": 3,
-  "nextUrl": "https://non-existant.com/api/v3/users/User/lists?offset=1&limit=1&fields=a"
+  "total": 3
 }

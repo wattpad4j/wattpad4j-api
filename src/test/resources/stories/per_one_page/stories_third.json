@@ -1,7 +1,7 @@
 {
   "stories": [
     {
-      "id": "1",
+      "id": "3",
       "title": "Title",
       "length": 5,
       "createDate": "2020-10-16T14:40:18Z",
@@ -82,6 +82,5 @@
       "readCount": 5
     }
   ],
-  "total": 3,
-  "nextUrl": "https://non-existant.com/v4/users/User/stories/published?offset=1&limit=1&fields=a"
+  "total": 3
 }

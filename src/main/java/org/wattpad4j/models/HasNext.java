@@ -13,6 +13,8 @@ public interface HasNext<T> {
 
 	Integer getTotal();
 
-	T merge(@Nullable T prev);
+	Integer getCurrentTotalElements();
+
+	T merge(@Nullable T next);
 
 }

@@ -33,13 +33,18 @@ public class WattpadStories implements HasNext<WattpadStories>, Serializable {
 	private URL nextUrl;
 
 	@Override
-	public WattpadStories merge(@Nullable WattpadStories prev) {
-		if (prev == null) {
+	public Integer getCurrentTotalElements() {
+		return stories == null ? 0 : stories.size();
+	}
+
+	@Override
+	public WattpadStories merge(@Nullable WattpadStories next) {
+		if (next == null || next == this) {
 			return this;
 		}
-		List<WattpadStory> stories = new ArrayList<>(prev.stories);
-		stories.addAll(this.stories);
-		return new WattpadStories(stories, this.total, this.nextUrl);
+		List<WattpadStory> stories = new ArrayList<>(this.stories);
+		stories.addAll(next.stories);
+		return new WattpadStories(stories, next.total, next.nextUrl);
 	}
 
 	@Override

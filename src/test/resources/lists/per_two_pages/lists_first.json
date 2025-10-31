@@ -1,8 +1,27 @@
 {
   "lists": [
     {
+      "id": 1,
+      "name": "Name",
+      "user": {
+        "name": "User",
+        "avatar": "https://img.wattpad.com/useravatarUser.jpg",
+        "fullname": "USER",
+        "verified": false
+      },
+      "numStories": 1,
+      "sample_covers": [
+        "https://img.wattpad.com/cover/1.jpg"
+      ],
+      "cover": "https://img.wattpad.com/ccover/2?v=2",
+      "tags": [
+        "tag1",
+        "tag2"
+      ]
+    },
+    {
       "id": 2,
-      "name": "2",
+      "name": "Name",
       "user": {
         "name": "User",
         "avatar": "https://img.wattpad.com/useravatarUser.jpg",
