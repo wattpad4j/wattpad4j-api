@@ -22,8 +22,6 @@ import jakarta.ws.rs.core.Response;
 
 public class WattpadApiTest {
 
-	private static final String TEST_HOST_URL = "https://non-existant.com";
-
 	private static WattpadApi wattpadApi;
 	private static final Client apiClient = Mockito.mock(Client.class);
 	private static final WebTarget target = Mockito.mock(WebTarget.class);
