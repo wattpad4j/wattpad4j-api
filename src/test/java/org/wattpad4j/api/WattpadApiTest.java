@@ -32,7 +32,7 @@ public class WattpadApiTest {
 
 	@BeforeAll
 	public static void setup() {
-		wattpadApi = new WattpadApi(TEST_HOST_URL);
+		wattpadApi = new WattpadApi();
 		wattpadApi.setApiClient(apiClient);
 		Mockito.when(apiClient.target(Mockito.anyString())).thenReturn(target);
 		Mockito.when(target.queryParam(Mockito.anyString(), Mockito.any())).thenReturn(target);

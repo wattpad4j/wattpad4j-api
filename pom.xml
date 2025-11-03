@@ -4,7 +4,7 @@
 
     <groupId>org.wattpad4j</groupId>
     <artifactId>wattpad4j-api</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
 
     <name>Wattpad4J-API</name>
     <description>Java Client Library for the Wattpad API</description>
@@ -41,10 +41,7 @@
 
         <!-- Libraries -->
         <lombok.version>1.18.42</lombok.version>
-        <jackson.core.version>2.20</jackson.core.version>
-        <jackson.databind.version>3.0.1</jackson.databind.version>
         <jackson.version>2.20.0</jackson.version>
-        <jakarta.activation.version>2.1.4</jakarta.activation.version>
         <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
         <jersey.version>3.1.11</jersey.version>
 
@@ -56,7 +53,6 @@
         <!-- Plugins -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
         <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
-        <maven.release.plugin.version>3.1.1</maven.release.plugin.version>
         <maven.jacoco.plugin.version>0.8.14</maven.jacoco.plugin.version>
         <maven.clean.plugin.version>3.5.0</maven.clean.plugin.version>
         <maven.enforcer.plugin.version>3.6.2</maven.enforcer.plugin.version>

@@ -45,11 +45,7 @@ public class WattpadApi {
 
 	@SuppressWarnings("unused")
 	public WattpadApi() {
-		this(WattpadConstants.BASE_URL);
-	}
-
-	public WattpadApi(@Nonnull final String baseUrl) {
-		this.baseUrl = baseUrl;
+		this.baseUrl = WattpadConstants.BASE_URL;
 		final ClientConfig clientConfig = new ClientConfig();
 
 		clientConfig.property(ClientProperties.FEATURE_AUTO_DISCOVERY_DISABLE, true);
