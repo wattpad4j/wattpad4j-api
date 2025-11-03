@@ -48,7 +48,7 @@
         <!-- Testing -->
         <junit.jupiter.version>5.14.0</junit.jupiter.version>
         <mockito.version>5.20.0</mockito.version>
-        <spotless.version>2.46.1</spotless.version>
+        <spotless.version>3.0.0</spotless.version>
 
         <!-- Plugins -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
