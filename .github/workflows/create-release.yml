@@ -57,7 +57,7 @@ jobs:
   # Set version will set the stable version number the same as the input variable `desired_version` of the workflow.
   # Outputs:
   #  - `tagged`: the full version number that was used, including any postfix set like 'RC1'
-  set-version:
+  set-version-and-create-pr:
     needs: validate
     runs-on: ubuntu-24.04
     outputs:
@@ -97,10 +97,19 @@ jobs:
         run: |
           git tag ${{ env.RELEASE_VERSION }}
           git push origin ${{ env.RELEASE_VERSION }}
+      - name: Create Pull Request
+        run: |
+          git checkout -b release-${{ env.RELEASE_VERSION }}
+          git push --set-upstream origin release-${{ env.RELEASE_VERSION }}
+          gh pr create \
+            --title "Release ${{ env.RELEASE_VERSION }}" \
+            --body "This PR was created using the GitHub CLI." \
+            --base main \
+            --head release-${{ env.RELEASE_VERSION }}
 
   # Create a release in GitHub with the same version as the Wattpad4J release.
   github-release:
-    needs: set-version
+    needs: set-version-and-create-pr
     runs-on: ubuntu-24.04
     if: ${{ needs.set-version.outputs.tagged }}
     steps:
@@ -115,39 +124,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Creates a pull request to merge the change into main.
-  create-pull-request:
-    needs:
-      - set-version
-      - github-release
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Configure Git
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "yarisvt@users.noreply.github.com"
-      - name: Create Pull Request
-        run: |
-          git checkout -b release-${{ needs.set-version.outputs.tagged }}
-          git push --set-upstream origin release-${{ needs.set-version.outputs.tagged }}
-          gh pr create \
-            --title "Release ${{ needs.set-version.outputs.tagged }}" \
-            --body "This PR was created using the GitHub CLI." \
-            --base main \
-            --head release-${{ needs.set-version.outputs.tagged }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   # Changes the version of Wattpad4J to the next desired *-SNAPSHOT version.
   # If the postfix was set, then the version will be reverted to the one discovered in the `validate`-job,
   # otherwise the Maven versions plugin is used to set the next snapshot version.
   prepare-next:
     needs:
       - validate
-      - set-version
-      - create-pull-request
+      - set-version-and-create-pr
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
