@@ -4,7 +4,7 @@
 
     <groupId>org.wattpad4j</groupId>
     <artifactId>wattpad4j-api</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <name>Wattpad4J-API</name>
     <description>Java Client Library for the Wattpad API</description>
