@@ -113,13 +113,13 @@ jobs:
   github-release:
     needs: set-version-and-create-pr
     runs-on: ubuntu-24.04
-    if: ${{ needs.set-version.outputs.tagged }}
+    if: ${{ needs.set-version-and-create-pr.outputs.tagged }}
     steps:
       - name: Create github release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.set-version.outputs.tagged }}
-          name: Release ${{ needs.set-version.outputs.tagged }}
+          tag_name: ${{ needs.set-version-and-create-pr.outputs.tagged }}
+          name: Release ${{ needs.set-version-and-create-pr.outputs.tagged }}
           draft: true
           prerelease: false
           generate_release_notes: true
