@@ -130,11 +130,13 @@ jobs:
           git config user.email "yarisvt@users.noreply.github.com"
       - name: Create Pull Request
         run: |
+          git checkout -b release-${{ needs.set-version.outputs.tagged }}
+          git push --set-upstream origin release-${{ needs.set-version.outputs.tagged }}
           gh pr create \
             --title "Release ${{ needs.set-version.outputs.tagged }}" \
             --body "This PR was created using the GitHub CLI." \
             --base main \
-            --head ${{ github.head_ref || github.ref_name }}
+            --head release-${{ needs.set-version.outputs.tagged }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
