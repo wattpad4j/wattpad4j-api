@@ -26,7 +26,7 @@ To utilize Wattpad4J API in your Java project, simply add the following dependen
 
 ```gradle
 dependencies {
-    implementation("org.wattpad4j:wattpad4j-api:1.0.0")
+    implementation("org.wattpad4j:wattpad4j-api:0.1.0")
 }
 ```
 
@@ -36,7 +36,7 @@ dependencies {
 <dependency>
     <groupId>org.wattpad4j</groupId>
     <artifactId>wattpad4j-api</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
