@@ -135,7 +135,7 @@ jobs:
             --base main \
             --head ${{ github.head_ref || github.ref_name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Changes the version of Wattpad4J to the next desired *-SNAPSHOT version.
   # If the postfix was set, then the version will be reverted to the one discovered in the `validate`-job,
