@@ -106,6 +106,8 @@ jobs:
             --body "This PR was created using the GitHub CLI." \
             --base main \
             --head release-${{ env.RELEASE_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Create a release in GitHub with the same version as the Wattpad4J release.
   github-release:
