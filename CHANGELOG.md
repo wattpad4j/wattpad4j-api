@@ -1,6 +1,6 @@
 # Wattpad4J-API Changelog
 
-## 0.2.0
+## 0.1.1
 - Added jersey-hk2 dependency.
 
 
