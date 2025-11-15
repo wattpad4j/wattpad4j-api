@@ -2,16 +2,10 @@ name: Create Wattpad4J Release
 
 on:
   workflow_dispatch:
-    inputs:
-      desired_version:
-        description: 'The version to set when creating the release, e.g.: 1.1.0'
-        required: true
-      postfix:
-        description: 'Any postfix to be appended to the release, e.g.: RC1'
-        default: ''
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
 
@@ -56,7 +50,7 @@ jobs:
   # Set version will set the stable version number the same as the input variable `desired_version` of the workflow.
   # Outputs:
   #  - `tagged`: the full version number that was used, including any postfix set like 'RC1'
-  set-version:
+  set-version-and-create-pr:
     needs: validate
     runs-on: ubuntu-24.04
     outputs:
@@ -78,13 +72,9 @@ jobs:
       - name: Set release version
         id: set_version
         run: |
-          RELEASE_VERSION="${{ github.event.inputs.desired_version }}"
-          if [ -n "${{ github.event.inputs.postfix }}" ]; then
-            echo "Appending postfix: ${{ github.event.inputs.postfix }}"
-            RELEASE_VERSION="${RELEASE_VERSION}-${{ github.event.inputs.postfix }}"
-          fi;
+          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}' versions:update-child-modules versions:commit
+          RELEASE_VERSION=$(mvn -q org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -DforceStdout -Dexpression=project.version | tr -d '\r\n')
           echo "Setting project version: ${RELEASE_VERSION}"
-          mvn versions:set versions:commit -DnewVersion="${RELEASE_VERSION}"
           echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
           echo "tag_version=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
       - name: Commit release
@@ -96,18 +86,29 @@ jobs:
         run: |
           git tag ${{ env.RELEASE_VERSION }}
           git push origin ${{ env.RELEASE_VERSION }}
+      - name: Create Pull Request
+        run: |
+          git checkout -b release-${{ env.RELEASE_VERSION }}
+          git push --set-upstream origin release-${{ env.RELEASE_VERSION }}
+          gh pr create \
+            --title "Release ${{ env.RELEASE_VERSION }}" \
+            --body "This PR was created using the GitHub CLI." \
+            --base main \
+            --head release-${{ env.RELEASE_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # Create a release in GitHub with the same version as the Wattpad4J release.
   github-release:
-    needs: set-version
+    needs: set-version-and-create-pr
     runs-on: ubuntu-24.04
-    if: ${{ needs.set-version.outputs.tagged }}
+    if: ${{ needs.set-version-and-create-pr.outputs.tagged }}
     steps:
       - name: Create github release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ needs.set-version.outputs.tagged }}
-          name: Release ${{ needs.set-version.outputs.tagged }}
+          tag_name: ${{ needs.set-version-and-create-pr.outputs.tagged }}
+          name: Release ${{ needs.set-version-and-create-pr.outputs.tagged }}
           draft: true
           prerelease: false
           generate_release_notes: true
@@ -120,7 +121,7 @@ jobs:
   prepare-next:
     needs:
       - validate
-      - set-version
+      - set-version-and-create-pr
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -139,11 +140,7 @@ jobs:
           git pull
       - name: Prepare next build phase
         run: |
-          if [ -n "${{ github.event.inputs.postfix }}" ]; then
-            mvn versions:set versions:commit -DnewVersion="${{ needs.validate.outputs.version }}" -q
-          else
-            mvn versions:set versions:commit -DnextSnapshot -q
-          fi;
+          mvn build-helper:parse-version versions:set -DnewVersion='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT' versions:commit
           NEXT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "NEXT_VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
       - name: Pushing committed snapshot

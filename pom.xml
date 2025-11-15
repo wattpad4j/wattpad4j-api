@@ -4,7 +4,7 @@
 
     <groupId>org.wattpad4j</groupId>
     <artifactId>wattpad4j-api</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 
     <name>Wattpad4J-API</name>
     <description>Java Client Library for the Wattpad API</description>
@@ -77,6 +77,11 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
             <version>${jersey.version}</version>
         </dependency>
         <dependency>
